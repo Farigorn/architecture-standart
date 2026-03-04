@@ -1,0 +1,27 @@
+@startuml
+!define RELATIVE_INCLUDE
+!include ../C4/C4_Context.puml
+
+title Диаграмма контекста с описанием основных компонентов
+
+Person(client, "Пользователь", "Пользователь интернет банка")
+
+System(site, "Сайт", "Сайт банка")
+System(abc, "АБС", "Автоматизированная банковская система")
+System(deposit, "Депозитный сервис", "Компонент депозитного процесса")
+System(internet_bank, "Интернет банк", "Приложение интернет банка")
+System(sms, "Смс компонент", "СМС-компонент банка")
+System(call_system, "Система кол-центра", "Система кол-центра")
+System_Ext(telecom, "Телеком-оператор", "Внешний оператор по отправке СМС")
+
+
+Rel(client, internet_bank, "Использует")
+Rel(client, site, "Использует")
+Rel(site, deposit, "Обращается")
+Rel(internet_bank, deposit, "Обращается")
+Rel(deposit, call_system, "Передаёт заявки на обзвон")
+Rel(deposit, abc, "обмен данными по депозитам и ставкам")
+Rel(abc, sms, "инициирует отправку смс")
+Rel(internet_bank, sms, "отправляет смс для подтверждения операции")
+Rel(sms, telecom, "отправляет смс")
+@enduml

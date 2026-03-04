@@ -1,0 +1,30 @@
+@startuml
+!include ../C4/C4_Container.puml
+
+title C4 Container — публикация ставок для кол-центров (ADR-4)
+
+Person(oper, "Оператор кол-центра", "Консультирует клиентов по депозитам")
+
+Container_Ext(call_system, "Система кол-центра банка", "React + Java + PostgreSQL", "Интерфейс оператора, хранение обращений")
+Container_Ext(call_partner_system, "Партнёрский кол-центр", "External", "Внешняя система партнёра")
+
+Container_Ext(store, "Файловое хранилище ставок", "File storage", "Обменная папка/хранилище файлов")
+
+System_Boundary(scope, "Контур публикации ставок") {
+
+  Container(deposit_service, "Депозитный сервис", "Java / Spring Boot", "Источник витрины ставок; управляет публикацией ставок")
+  ContainerDb(deposit_db, "БД витрины ставок", "MS SQL", "Ставки/условия, дата актуальности, версии")
+  Container(export_job, "Экспорт ставок (job)", "Java (@Scheduled)", "Формирует файл ставок из витрины и публикует в хранилище")
+
+}
+
+Rel(oper, call_system, "Использует")
+
+Rel(deposit_service, deposit_db, "Чтение и запись витрины", "JDBC")
+Rel(export_job, deposit_db, "Читает витрину ставок", "JDBC")
+
+Rel(export_job, store, "Публикует актуальные версии версии", "Write")
+Rel(call_system, store, "Забирает файл ставок (pull)", "Read")
+Rel(call_partner_system, store, "Забирает файл ставок (pull)", "Read")
+
+@enduml
