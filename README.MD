@@ -23,3 +23,6 @@
 4) Передача ставок в кол-центр
 
 [ADR_Call_Center_problem.md](Task4/ADR_Call_Center_problem.md)
+
+[roadmap_mvp.drawio](Task4/roadmap_mvp.drawio)
+![roadmap_mvp.png](Task4/roadmap_mvp.png)
