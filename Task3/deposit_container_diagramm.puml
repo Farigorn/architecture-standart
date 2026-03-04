@@ -1,0 +1,37 @@
+@startuml
+!include ../C4/C4_Container.puml
+AddRelTag("async", $textColor=$ARROW_FONT_COLOR, $lineColor=$ARROW_COLOR, $lineStyle=DashedLine())
+
+title Диаграмма контейнеров для решения (MVP депозиты)
+
+Person(user, "Пользователь", "Клиент банка (сайт, интернет-банк)")
+
+
+Container(site_web, "Сайт", "PHP + React", "Просмотр депозитов и заявка")
+Container(internet_bank, "Интернет-банк", "ASP.NET MVC 4.5", "Просмотр депозитов, заявка, подтверждение по СМС")
+
+Container(deposit_service, "Депозитный сервис", "Java / Spring Boot", "Приём заявок, выдача списка депозитов, витрина ставок, статусы заявок")
+ContainerDb(deposit_db, "БД депозитного сервиса", "MS SQL", "Витрина ставок, заявки, статусы, таблица задач,outbox")
+
+Container(sms, "СМС-компонент банка", "Service", "OTP и уведомления")
+
+Container(abc, "АБС", "Delphi + Oracle + PL/SQL", "Обработка заявок и подтверждение менеджером")
+Container(call_system, "Система кол-центра", "React  Java  PostgresSQL", "Обзвон заявок с сайта")
+Container(telecom, "Телеком-оператор", "Внешний сервис", "Доставка СМС")
+
+Rel(user, site_web, "Просматривает депозиты, оставляет заявку", "HTTPS (TLS)")
+Rel(user, internet_bank, "Просматривает депозиты, подаёт заявку", "HTTPS (TLS)")
+
+Rel(site_web, deposit_service, "Запрос депозитов, отправка заявки", "HTTPS (TLS)")
+Rel(internet_bank, deposit_service, "Запрос депозитов, подача заявки, статус", "HTTPS (TLS)")
+
+Rel(deposit_service, deposit_db, "Чтение и запись", "JDBC")
+
+Rel(deposit_service, call_system, "Передаёт заявку на обзвон", "HTTPS")
+Rel(deposit_service, abc, "Передаёт заявки на депозит", "Интеграция с АБС", $tags="async")
+
+Rel(internet_bank, sms, "Запрос OTP для подтверждения", "HTTP API")
+Rel(abc, sms, "Уведомления по результату заявки на депозит", "HTTP API")
+Rel(sms, telecom, "Отправка СМС", "API/SMPP")
+
+@enduml

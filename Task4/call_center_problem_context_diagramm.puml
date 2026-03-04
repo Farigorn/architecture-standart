@@ -1,0 +1,19 @@
+@startuml
+!define RELATIVE_INCLUDE
+!include ../C4/C4_Context.puml
+
+Person(oper, "Оператор кол-центра", "Консультирует клиентов по депозитам")
+
+System(call_system, "Система кол-центра банка", "Интерфейс оператора")
+System_Ext(call_partner_system, "Партнёрский кол-центр", "Внешняя система партнёра")
+
+System(deposit, "Депозитный сервис", "Публикует актуальные ставки")
+System_Ext(store, "Файловое хранилище ставок", "Обменная папка хранилище файлов")
+
+Rel(oper, call_system, "Использует")
+
+Rel(deposit, store, "Публикует файл ставок")
+Rel(call_system, store, "Забирает файл ставок")
+Rel(call_partner_system, store, "Забирает файл ставок")
+
+@enduml
